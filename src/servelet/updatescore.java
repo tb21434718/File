@@ -88,6 +88,7 @@ public class updatescore extends HttpServlet {
 		request.setAttribute("id",filmid);
 		RequestDispatcher view=request.getRequestDispatcher("/single?id="+filmid);
 	    view.forward(request, response);
+	    
 		
 	}
 
