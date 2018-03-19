@@ -97,4 +97,15 @@ public class UserDao {
 		   return result;
 
 	   }
+	   
+	   public String getUserIdByNameAndPasswor(String username,String password) throws SQLException{
+		   String sql="select id from usertable where username='"+username+"' and password='"+password+"'";
+		   System.out.println("userdao"+sql);
+		   ResultSet rst = conn.executeQuery(sql);
+		  if(rst.next()){
+			return rst.getString(1); 
+		  }
+		   return null;
+	   }
+	   
 }

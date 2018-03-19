@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import KafkaUtil.KafkaProducerAction;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import dao.*;
@@ -19,7 +22,7 @@ import domain.*;
 @WebServlet("/updatescore")
 public class updatescore extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+	String recommendmessage[]=new String[4];
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -67,8 +70,16 @@ public class updatescore extends HttpServlet {
 		
 		
 	//	int userid=new UserDao().getUserByUsername((String)session.getAttribute("username")).getId();
-	    if(updateresult&&insertresult){
+	    if(updateresult&&!insertresult){
 		new ScoredDao().insertScoreByuserIdandFilmid(userid1, filmid, score);
+		
+		//use recommend engine
+		recommendmessage[0]=(String) session.getAttribute("uid");
+		recommendmessage[1]=filmid;  
+		recommendmessage[2]=score;
+		recommendmessage[3]="2018";     
+		KafkaProducerAction.send(recommendmessage);
+		
 		request.setAttribute("hasscored","yes");
 	    }
 		int point=Integer.parseInt(score);

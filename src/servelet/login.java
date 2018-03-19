@@ -53,6 +53,12 @@ public class login extends HttpServlet {
 			HttpSession session=request.getSession();
         	session.setAttribute("login", "yes");
         	session.setAttribute("username", username);
+        	try {
+				session.setAttribute("uid", userdao.getUserIdByNameAndPasswor(username, password));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         	request.setAttribute("round",1);
             RequestDispatcher view=request.getRequestDispatcher("/index_servlet?round=1");
   			view.forward(request, response);

@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.*;
 import java.io.*;
 import domain.*;
 import tools.*;
@@ -488,6 +488,13 @@ public ArrayList<Filmtable> getFilmByType(String type,String round){
 	   
 }
 
+public List<Filmtable> getRecommend(List<String> usernamelist){
+
+	for( String i :usernamelist){
+		Re.add(getFilmByFilmId(i));
+	}
+	return Re;
+}
 
 
 @SuppressWarnings("finally")
@@ -506,6 +513,8 @@ public boolean insertCheck(String userid, String filmid) {
 			conn.close(); 
 			return result;
 		}
+	   
+
 }
 
 

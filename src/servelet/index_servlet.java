@@ -3,6 +3,7 @@ package servelet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import domain.*;
 import dao.FilmDao;
+import dao.RecommendDao;
 
 /**
  * Servlet implementation class index_servlet
@@ -21,7 +23,8 @@ import dao.FilmDao;
 @WebServlet("/index_servlet")
 public class index_servlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+	RecommendDao recommend=new RecommendDao();//判断是否有推荐列表
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -35,11 +38,10 @@ public class index_servlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
-		
-		
-		String round=request.getParameter("round");
 		HttpSession session =request.getSession();
+		FilmDao temp=new FilmDao();
+		String round=request.getParameter("round");
+		String userid=(String)session.getAttribute("uid");
 		ArrayList<Filmtable> newfilm=new FilmDao().getFiveNewFilm();
 		ArrayList<Filmtable> highfilm=new FilmDao().getFivehifhscoreFilm();
 		request.setAttribute("fivenewfilm",newfilm);
@@ -56,12 +58,28 @@ public class index_servlet extends HttpServlet {
 		}else{
 			request.setAttribute("film",film);
 		}
+		
+		//推荐
+		temp.get_vistor_films();
+		ArrayList<Filmtable> vistor_film=temp.getVistor_film();
 		if(session.getAttribute("login")==null) {
 
-			ArrayList<Filmtable> vistor_film=new FilmDao().getVistor_film();
+			System.out.println("登录前"+vistor_film.size());
 			request.setAttribute("vistor_film", vistor_film);	
-		}else {
-			request.setAttribute("vistor_film", film);
+		}else {//登录后
+			System.out.println("登录后");
+		//	request.setAttribute("vistor_film", film);
+			//用户登录后 after user login
+			List<String> recommendtmp=recommend.getRecommendMovie(userid);
+			if(recommendtmp.isEmpty()||recommendtmp.size()==0)
+			{System.out.println("推荐结果为空");
+				request.setAttribute("vistor_film", vistor_film);	
+			}
+			else{
+				//加判断条件
+				request.setAttribute("vistor_film", new FilmDao().getRecommend(recommendtmp));
+				
+			}  
 		}
 		
 		request.setAttribute("round1",round);
